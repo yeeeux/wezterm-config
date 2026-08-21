@@ -16,6 +16,10 @@ local onedark = {
    -- (в т.ч. серый onedark.fg) почти не читался. Bright-вариант ниже
    -- оставлен исходным ярким — акцентный синий в тексте не тускнеет.
    blue_muted   = '#3f7dc9',
+   -- Компромисс для regular ANSI-7 (см. комментарий у ansi[8] ниже) — светлее
+   -- comment, ближе к математическому оптимуму между ролью фона и ролью
+   -- текста у Claude Code.
+   white_muted  = '#686f7c',
    purple       = '#c678dd',
    cyan         = '#56b6c2',
    orange       = '#d19a66',
@@ -29,8 +33,12 @@ local colorscheme = {
    cursor_bg = onedark.cursor,
    cursor_border = onedark.cursor,
    cursor_fg = onedark.bg,
-   selection_bg = onedark.bg_selection,
-   selection_fg = onedark.fg,
+   -- Тёмный selection_bg (bg_selection) давал ~1.6:1 контраста против
+   -- приглушённого текста (comment) той же палитры — «серое на сером»,
+   -- нечитаемо. Светлый фон + тёмный текст даёт ~6.6:1 и не зависит от
+   -- исходного цвета выделяемого текста.
+   selection_bg = onedark.fg,
+   selection_fg = onedark.bg,
    ansi = {
       onedark.bg,      -- black
       onedark.red,     -- red
@@ -39,7 +47,17 @@ local colorscheme = {
       onedark.blue_muted, -- blue (обычный, не bold — используется как фон выделения)
       onedark.purple,  -- magenta/purple
       onedark.cyan,    -- cyan
-      onedark.fg,      -- white
+      -- Regular (не bold) ANSI-7 переиспользуется Claude Code в двух ролях
+      -- сразу: как ФОН подсвеченных блоков (SGR 47, напр. развёрнутая
+      -- команда) и как ЦВЕТ ТЕКСТА статусных строк (SGR 37, напр.
+      -- "Cogitated for Ns"). Один плоский цвет не может одновременно быть
+      -- «тёмным» (контраст с дефолтным светлым текстом поверх, для роли
+      -- фона) и «светлым» (контраст с тёмным bg терминала, для роли
+      -- текста) — это ограничение 16-цветной ANSI-палитры, не баг темы.
+      -- white_muted — чуть светлее математического оптимума (комментарий
+      -- в тон), даёт ~2.4–2.8:1 в обе стороны вместо 1:1 в одну.
+      -- Bright-white ниже не трогаю — текст им не тускнеет.
+      onedark.white_muted, -- white (обычный, не bold — компромисс между ролью фона и ролью текста)
    },
    brights = {
       onedark.comment, -- black
